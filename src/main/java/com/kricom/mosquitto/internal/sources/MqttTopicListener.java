@@ -58,7 +58,7 @@ public class MqttTopicListener extends PollingSource<String, Object> {
             LOGGER.error("Could not subscribe to topic");
         }
 
-        LOGGER.info("Actual status of Queue");
+        LOGGER.info("Queue Actual status");
         for (Map.Entry<String, Queue<String>> queue: incommingMessages.entrySet()) {
             LOGGER.info("|--> " + queue.getKey());
         }
@@ -66,9 +66,9 @@ public class MqttTopicListener extends PollingSource<String, Object> {
 
     @Override
     protected void doStop() {
-        LOGGER.info("MqttTopicListener --> doStop()");
+        LOGGER.debug("MqttTopicListener --> doStop()");
         if (!mutils.isConnected()) {
-            LOGGER.info("Not connected --> Reconect!");
+            LOGGER.error("Not connected --> Reconect!");
             mutils.reconnect(config);
         }
         try {
@@ -89,7 +89,7 @@ public class MqttTopicListener extends PollingSource<String, Object> {
 //            LOGGER.info("No new messages...");
             return;
         }
-        LOGGER.info("Message extracted from Queue: " + message);
+//        LOGGER.debug("Message extracted from Queue: " + message);
         //Add message to payload
         pollContext.accept(item -> {
                     item.setResult(Result.<String, Object>builder()
@@ -122,8 +122,10 @@ public class MqttTopicListener extends PollingSource<String, Object> {
      * @param topic
      */
     private void createQueue(String topic) {
-        if (this.incommingMessages.get(topic) == null) {
-            this.incommingMessages.put(topic, new LinkedList<String>());
+        synchronized (this) {
+            if (this.incommingMessages.get(topic) == null) {
+                this.incommingMessages.put(topic, new LinkedList<String>());
+            }
         }
 
     }
@@ -147,7 +149,7 @@ public class MqttTopicListener extends PollingSource<String, Object> {
 
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
-            LOGGER.info("Topic: " + topic + " - Message: " + message.toString());
+//            LOGGER.debug("Topic: " + topic + " - Message: " + message.toString());
             addMessage(topic, message.toString());
         }
 
@@ -158,7 +160,7 @@ public class MqttTopicListener extends PollingSource<String, Object> {
 
         @Override
         public void connectionLost(Throwable cause) {
-            LOGGER.error("Conectio LOST!!");
+            LOGGER.error("Conection LOST!!");
             cause.printStackTrace();
         }
     };

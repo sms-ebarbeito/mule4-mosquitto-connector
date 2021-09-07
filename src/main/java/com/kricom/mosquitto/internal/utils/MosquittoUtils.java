@@ -32,7 +32,7 @@ public class MosquittoUtils {
             connOpts.setUserName(config.getUserName());
             connOpts.setPassword(config.getPassword().toCharArray());
             connOpts.setCleanSession(true);
-            LOGGER.info("checking");
+            LOGGER.debug("checking");
             LOGGER.info("Mqtt Connecting to broker: " + brokerUrl);
             mqttClient.connect(connOpts);
             LOGGER.info("Mqtt Connected");
@@ -64,7 +64,7 @@ public class MosquittoUtils {
             mqttClient.disconnect();
             LOGGER.info("Disconnected");
         } catch (MqttException me) {
-            System.out.println(me);
+            LOGGER.error("" + me.getLocalizedMessage());
         }
     }
 

@@ -30,15 +30,15 @@ public class PublishOperation {
 
     MosquittoUtils mutils = MosquittoUtils.getInstance();
     if (!mutils.isConnected()) {
-      LOGGER.info("Not connected --> Reconect!");
+      LOGGER.debug("Not connected --> Reconect!");
       mutils.reconnect(config);
     }
 
-    System.out.println("Publishing message");
+    LOGGER.debug("Publishing message");
     MqttMessage message = new MqttMessage(payload.getBytes());
     message.setQos(qos);
     mutils.getClient().publish(topic, message);
-    System.out.println("Message published");
+    LOGGER.debug("Message published");
     return "Message sent";
 
   }
