@@ -1,12 +1,8 @@
-# Mule4-mosquitto- Extension
-
-Add description ...
-
-
-...
+# Mule4-mosquitto-connector
+![](https://raw.githubusercontent.com/sms-ebarbeito/mule4-mosquitto-connector/main/icon/icon.svg?token=AVAE5LK6UBIDCWZKFL7MUB3BG7F6S)
 
 
-...
+This is a Mule Connector to Mosquitto queue
 
 
 Add this dependency to your application pom.xml
@@ -17,3 +13,10 @@ Add this dependency to your application pom.xml
 <version>1.0.0</version>
 <classifier>mule-plugin</classifier>
 ```
+
+To install 
+```
+mvn clean install
+```
+
+###End
