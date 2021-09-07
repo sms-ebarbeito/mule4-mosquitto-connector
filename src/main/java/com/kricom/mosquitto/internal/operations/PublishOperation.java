@@ -1,19 +1,16 @@
 package com.kricom.mosquitto.internal.operations;
 
-import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
-
 import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
 import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnection;
-import com.kricom.mosquitto.internal.sources.MqttTopicListener;
 import com.kricom.mosquitto.internal.utils.MosquittoUtils;
-import org.eclipse.paho.client.mqttv3.*;
-import org.eclipse.paho.client.mqttv3.logging.Logger;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.mule.runtime.extension.api.annotation.param.MediaType;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
+import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.slf4j.LoggerFactory;
+
+import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
 
 
 /**

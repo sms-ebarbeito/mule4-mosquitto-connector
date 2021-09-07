@@ -1,14 +1,14 @@
 {
   "name": "Mosquitto",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
-  "version": "0.0.1-SNAPSHOT-a24",
+  "version": "1.0.0",
   "vendor": "ar.kricom",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "mule4-mosquitto",
     "namespace": "http://www.mulesoft.org/schema/mule/mule4-mosquitto",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/mule4-mosquitto/current/mule-mule4-mosquitto.xsd",
-    "schemaVersion": "0.0.1-SNAPSHOT-a24",
+    "schemaVersion": "1.0.0",
     "xsdFileName": "mule-mule4-mosquitto.xsd"
   },
   "resources": [],

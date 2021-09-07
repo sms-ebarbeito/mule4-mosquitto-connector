@@ -1,22 +1,8 @@
 package com.kricom.mosquitto.internal.connection;
 
 import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
-import com.kricom.mosquitto.internal.utils.MosquittoUtils;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.runtime.api.connection.*;
 import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.Connection;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.connection.PoolingConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.connection.CachedConnectionProvider;
-import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

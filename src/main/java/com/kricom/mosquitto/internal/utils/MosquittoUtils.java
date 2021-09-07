@@ -1,7 +1,6 @@
 package com.kricom.mosquitto.internal.utils;
 
 import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
-import com.kricom.mosquitto.internal.operations.PublishOperation;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
