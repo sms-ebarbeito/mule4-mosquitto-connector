@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
-<title>Mule4-mosquitto- Module Documentation Reference</title>
+<title>Mosquitto Module Documentation Reference</title>
 <style>
 /**
  * (c) 2003-2015 MuleSoft, Inc. This software is protected under international copyright
@@ -2065,9 +2065,9 @@ table.CodeRay td.code>pre{padding:0}
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Mule4-mosquitto- Module Documentation Reference</h1>
+<h1>Mosquitto Module Documentation Reference</h1>
 <div id="toc" class="toc2">
-<div id="toctitle">Mule4-mosquitto- Module</div>
+<div id="toctitle">Mosquitto Module</div>
 <ul class="sectlevel1">
 <li><a href="#_configurations">Configurations</a>
 <ul class="sectlevel2">
@@ -2076,8 +2076,12 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_operations">Operations</a>
 <ul class="sectlevel2">
-<li><a href="#retrieveInfo">Retrieve Info</a></li>
-<li><a href="#sayHi">Say Hi</a></li>
+<li><a href="#publish">Publish</a></li>
+</ul>
+</li>
+<li><a href="#_sources">Sources</a>
+<ul class="sectlevel2">
+<li><a href="#Listener">Listener</a></li>
 </ul>
 </li>
 <li><a href="#_types">Types</a>
@@ -2087,6 +2091,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#reconnect-forever">Reconnect Forever</a></li>
 <li><a href="#PoolingProfile">Pooling Profile</a></li>
 <li><a href="#ExpirationPolicy">Expiration Policy</a></li>
+<li><a href="#RedeliveryPolicy">Redelivery Policy</a></li>
 </ul>
 </li>
 </ul>
@@ -2150,13 +2155,22 @@ Default configuration
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Config Id</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Mosquitto Host</p></td>
 <td class="tableblock halign-left valign-middle"><div><div class="paragraph">
 <p>String</p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">localhost</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Mosquitto Port</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>Number</p>
+</div></div></td>
 <td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">1883</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">User Name</p></td>
@@ -2177,21 +2191,12 @@ Default configuration
 <td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Host</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Client Id</p></td>
 <td class="tableblock halign-left valign-middle"><div><div class="paragraph">
 <p>String</p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">localhost</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Port</p></td>
-<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
-<p>Number</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">1883</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">mule-mosquito-client</p></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
@@ -2231,24 +2236,6 @@ Default configuration
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Required Parameter</p></td>
-<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
-<p>String</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Friendly Name</p></td>
-<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
-<p>Number</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">100</p></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">Reconnection</p></td>
 <td class="tableblock halign-left valign-middle"><div><div class="paragraph">
 <p><a href="#Reconnection">Reconnection</a></p>
@@ -2276,7 +2263,17 @@ Default configuration
 <div class="ulist">
 <ul>
 <li>
-<p><a href="#retrieveInfo">Retrieve Info</a> &#160;</p>
+<p><a href="#publish">Publish</a> &#160;</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_associated_sources">Associated Sources</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#Listener">Listener</a> &#160;</p>
 </li>
 </ul>
 </div>
@@ -2288,14 +2285,9 @@ Default configuration
 <h2 id="_operations">Operations</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="retrieveInfo">Retrieve Info</h3>
+<h3 id="publish">Publish</h3>
 <div class="paragraph">
-<p><code>&lt;mule4-mosquitto:retrieve-info&gt;</code></p>
-</div>
-<div class="paragraph">
-<p>
-Example of an operation that uses the configuration and a connection instance to perform some action.
-</p>
+<p><code>&lt;mule4-mosquitto:publish&gt;</code></p>
 </div>
 <div class="sect3">
 <h4 id="_parameters_3">Parameters</h4>
@@ -2323,6 +2315,33 @@ Example of an operation that uses the configuration and a connection instance to
 <td class="tableblock halign-left valign-middle"><p class="tableblock">The name of the configuration to use.</p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Payload</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>String</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Topic</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>String</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Qos</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>Number</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">2</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">Output Mime Type</p></td>
@@ -2411,15 +2430,15 @@ Example of an operation that uses the configuration and a connection instance to
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="sayHi">Say Hi</h3>
-<div class="paragraph">
-<p><code>&lt;mule4-mosquitto:say-hi&gt;</code></p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_sources">Sources</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Listener">Listener</h3>
 <div class="paragraph">
-<p>
-Example of a simple operation that receives a string parameter and returns a new string message that will be set on the payload.
-</p>
+<p><code>&lt;mule4-mosquitto:listener&gt;</code></p>
 </div>
 <div class="sect3">
 <h4 id="_parameters_4">Parameters</h4>
@@ -2442,13 +2461,20 @@ Example of a simple operation that receives a string parameter and returns a new
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Person</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Configuration</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The name of the configuration to use.</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Topic</p></td>
 <td class="tableblock halign-left valign-middle"><div><div class="paragraph">
 <p>String</p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-left valign-middle"></td>
-<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">topic-test</p></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">Output Mime Type</p></td>
@@ -2460,21 +2486,30 @@ Example of a simple operation that receives a string parameter and returns a new
 <td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Target Variable</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Primary Node Only</p></td>
 <td class="tableblock halign-left valign-middle"><div><div class="paragraph">
-<p>String</p>
+<p>Boolean</p>
 </div></div></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The name of a variable on which the operation's output will be placed</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Whether this source should only be executed on the primary node when runnning in Cluster</p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Target Value</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Scheduling Strategy</p></td>
 <td class="tableblock halign-left valign-middle"><div><div class="paragraph">
-<p>String</p>
+<p><a href="#scheduling-strategy">[scheduling-strategy]</a></p>
 </div></div></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">#[payload]</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Configures the scheduler that triggers the polling</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-center valign-middle"><p class="tableblock"><strong>x</strong>&#160;</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Redelivery Policy</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p><a href="#RedeliveryPolicy">Redelivery Policy</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Defines a policy for processing the redelivery of the same message</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-center valign-middle"><p class="tableblock">&#160;</p></td>
 </tr>
 </tbody>
@@ -2494,8 +2529,24 @@ Example of a simple operation that receives a string parameter and returns a new
 <p>String</p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Attributes Type</strong></p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>Any</p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="sect3">
+<h4 id="_for_configurations_2">For Configurations.</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#config">Config</a> &#160;</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -2805,6 +2856,74 @@ Example of a simple operation that receives a string parameter and returns a new
 </ul>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">A time unit that qualifies the maxIdleTime attribute</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="RedeliveryPolicy">Redelivery Policy</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 25%;">
+<col style="width: 30%;">
+<col style="width: 15%;">
+<col style="width: 10%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Field</th>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Default Value</th>
+<th class="tableblock halign-left valign-middle">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Max Redelivery Count</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>Number</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The maximum number of times a message can be redelivered and processed unsuccessfully before triggering process-failed-message</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Use Secure Hash</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>Boolean</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Whether to use a secure hash algorithm to identify a redelivered message</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Message Digest Algorithm</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>String</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The secure hashing algorithm to use. If not set, the default is SHA-256.</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Id Expression</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p>String</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Defines one or more expressions to use to determine when a message has been redelivered. This property may only be set if useSecureHash is false.</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Object Store</p></td>
+<td class="tableblock halign-left valign-middle"><div><div class="paragraph">
+<p><a href="#ObjectStore">[ObjectStore]</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The object store where the redelivery counter for each message is going to be stored.</p></td>
 <td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"></td>
 </tr>

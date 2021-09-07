@@ -1,6 +1,14 @@
 package com.kricom.mosquitto.internal.connection;
 
+import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
+import com.kricom.mosquitto.internal.utils.MosquittoUtils;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -28,23 +36,14 @@ public class Mule4mosquittoConnectionProvider implements PoolingConnectionProvid
 
   private final Logger LOGGER = LoggerFactory.getLogger(Mule4mosquittoConnectionProvider.class);
 
- /**
-  * A parameter that is always required to be configured.
-  */
-  @Parameter
-  private String requiredParameter;
-
- /**
-  * A parameter that is not required to be configured by the user.
-  */
-  @DisplayName("Friendly Name")
-  @Parameter
-  @Optional(defaultValue = "100")
-  private int optionalParameter;
+  @Config
+  private Mule4mosquittoConfiguration config;
 
   @Override
   public Mule4mosquittoConnection connect() throws ConnectionException {
-    return new Mule4mosquittoConnection(requiredParameter + ":" + optionalParameter);
+//    MosquittoUtils mutils = MosquittoUtils.getInstance();
+//    mutils.connect(config);
+    return new Mule4mosquittoConnection("bla bla bla");
   }
 
   @Override

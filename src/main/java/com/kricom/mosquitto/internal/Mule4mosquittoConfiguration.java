@@ -1,8 +1,10 @@
 package com.kricom.mosquitto.internal;
 
 import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnectionProvider;
-import com.kricom.mosquitto.internal.operations.ProduceOperation;
+import com.kricom.mosquitto.internal.operations.PublishOperation;
+import com.kricom.mosquitto.internal.sources.MqttTopicListener;
 import org.mule.runtime.extension.api.annotation.Operations;
+import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -13,12 +15,10 @@ import org.mule.runtime.extension.api.annotation.param.display.Password;
  * This class represents an extension configuration, values set in this class are commonly used across multiple
  * operations since they represent something core from the extension.
  */
-@Operations(ProduceOperation.class)
+@Operations({PublishOperation.class})
+@Sources({MqttTopicListener.class})
 @ConnectionProviders(Mule4mosquittoConnectionProvider.class)
 public class Mule4mosquittoConfiguration {
-
-  @Parameter
-  private String configId;
 
   @DisplayName("Mosquitto Host")
   @Optional(defaultValue = "localhost")
@@ -41,9 +41,10 @@ public class Mule4mosquittoConfiguration {
   @Parameter
   private String password;
 
-  public String getConfigId(){
-    return configId;
-  }
+  @DisplayName("Client Id")
+  @Optional(defaultValue = "mule-mosquito-client")
+  @Parameter
+  private String clientId;
 
   public String getUserName() {
     return userName;
@@ -59,5 +60,9 @@ public class Mule4mosquittoConfiguration {
 
   public int getPort() {
     return port;
+  }
+
+  public String getClientId() {
+    return clientId;
   }
 }

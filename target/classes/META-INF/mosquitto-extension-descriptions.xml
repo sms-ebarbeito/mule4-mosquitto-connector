@@ -4,7 +4,10 @@
         <config name="config">
             <description><![CDATA[Default configuration]]></description>
             <parameters>
-                <parameter name="configId">
+                <parameter name="host">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="port">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="userName">
@@ -13,10 +16,7 @@
                 <parameter name="password">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="host">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="port">
+                <parameter name="clientId">
                     <description><![CDATA[]]></description>
                 </parameter>
                 <parameter name="expirationPolicy">
@@ -29,12 +29,6 @@
         <connection name="connection">
             <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="requiredParameter">
-                    <description><![CDATA[]]></description>
-                </parameter>
-                <parameter name="optionalParameter">
-                    <description><![CDATA[]]></description>
-                </parameter>
                 <parameter name="reconnection">
                     <description><![CDATA[When the application is deployed, a connectivity test is performed on all connectors. If set to true, deployment will fail if the test doesn't pass after exhausting the associated reconnection strategy]]></description>
                 </parameter>
@@ -44,14 +38,23 @@
             </parameters>
         </connection>
     </connections>
-    <extension name="Mule4-mosquitto-">
+    <extension name="Mosquitto">
         <description><![CDATA[This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.]]></description>
         <parameters/>
     </extension>
     <operations>
-        <operation name="retrieveInfo">
-            <description><![CDATA[Example of an operation that uses the configuration and a connection instance to perform some action.]]></description>
+        <operation name="publish">
+            <description><![CDATA[]]></description>
             <parameters>
+                <parameter name="payload">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="topic">
+                    <description><![CDATA[]]></description>
+                </parameter>
+                <parameter name="qos">
+                    <description><![CDATA[]]></description>
+                </parameter>
                 <parameter name="outputMimeType">
                     <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
                 </parameter>
@@ -66,24 +69,25 @@
                 </parameter>
             </parameters>
         </operation>
-        <operation name="sayHi">
-            <description><![CDATA[Example of a simple operation that receives a string parameter and returns a new string message that will be set on the payload.]]></description>
+    </operations>
+    <sources>
+        <source name="Listener">
+            <description><![CDATA[]]></description>
             <parameters>
-                <parameter name="person">
+                <parameter name="topic">
                     <description><![CDATA[]]></description>
                 </parameter>
-                <parameter name="outputMimeType">
-                    <description><![CDATA[The mime type of the payload that this operation outputs.]]></description>
+                <parameter name="primaryNodeOnly">
+                    <description><![CDATA[Whether this source should only be executed on the primary node when runnning in Cluster]]></description>
                 </parameter>
-                <parameter name="target">
-                    <description><![CDATA[The name of a variable on which the operation's output will be placed]]></description>
+                <parameter name="schedulingStrategy">
+                    <description><![CDATA[Configures the scheduler that triggers the polling]]></description>
                 </parameter>
-                <parameter name="targetValue">
-                    <description><![CDATA[An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable]]></description>
+                <parameter name="redeliveryPolicy">
+                    <description><![CDATA[Defines a policy for processing the redelivery of the same message]]></description>
                 </parameter>
             </parameters>
-        </operation>
-    </operations>
-    <sources/>
+        </source>
+    </sources>
     <types/>
 </extension-documentation>

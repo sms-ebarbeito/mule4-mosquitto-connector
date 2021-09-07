@@ -1,5 +1,5 @@
 :toc:               left
-:toc-title:         Mule4-mosquitto- Module
+:toc-title:         Mosquitto Module
 :toclevels:         2
 :last-update-label!:
 :docinfo:
@@ -7,7 +7,7 @@
 :icons: font
 
 
-= Mule4-mosquitto- Module Documentation Reference
+= Mosquitto Module Documentation Reference
 
 +++
 This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.
@@ -30,11 +30,11 @@ Default configuration
 |Name | String | The name for this configuration. Connectors reference the configuration with this name. | | *x*{nbsp}
 | Connection a| <<config_connection, Connection>>
  | The connection types that can be provided to this configuration. | | *x*{nbsp}
-| Config Id a| String |  |  | *x*{nbsp}
+| Mosquitto Host a| String |  |  +++localhost+++ | {nbsp}
+| Mosquitto Port a| Number |  |  +++1883+++ | {nbsp}
 | User Name a| String |  |  +++mule+++ | {nbsp}
 | Password a| String |  |  +++max+++ | {nbsp}
-| Host a| String |  |  +++localhost+++ | {nbsp}
-| Port a| Number |  |  +++1883+++ | {nbsp}
+| Client Id a| String |  |  +++mule-mosquito-client+++ | {nbsp}
 | Expiration Policy a| <<ExpirationPolicy>> |  +++Configures the minimum amount of time that a dynamic configuration instance can remain idle before the runtime considers it eligible for expiration. This does not mean that the platform will expire the instance at the exact moment that it becomes eligible. The runtime will actually purge the instances when it sees it fit.+++ |  | {nbsp}
 |======================
 
@@ -47,32 +47,32 @@ Default configuration
 [cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
 |======================
 | Name | Type | Description | Default Value | Required
-| Required Parameter a| String |  |  | *x*{nbsp}
-| Friendly Name a| Number |  |  +++100+++ | {nbsp}
 | Reconnection a| <<Reconnection>> |  +++When the application is deployed, a connectivity test is performed on all connectors. If set to true, deployment will fail if the test doesn't pass after exhausting the associated reconnection strategy+++ |  | {nbsp}
 | Pooling Profile a| <<PoolingProfile>> |  +++Characteristics of the connection pool+++ |  | {nbsp}
 |======================
 
 ==== Associated Operations
-* <<retrieveInfo>> {nbsp}
+* <<publish>> {nbsp}
 
+==== Associated Sources
+* <<Listener>> {nbsp}
 
 
 == Operations
 
-[[retrieveInfo]]
-=== Retrieve Info
-`<mule4-mosquitto:retrieve-info>`
+[[publish]]
+=== Publish
+`<mule4-mosquitto:publish>`
 
-+++
-Example of an operation that uses the configuration and a connection instance to perform some action.
-+++
 
 ==== Parameters
 [cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
 |======================
 | Name | Type | Description | Default Value | Required
 | Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Payload a| String |  |  | *x*{nbsp}
+| Topic a| String |  |  | *x*{nbsp}
+| Qos a| Number |  |  +++2+++ | {nbsp}
 | Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
 | Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
 | Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
@@ -94,31 +94,34 @@ Example of an operation that uses the configuration and a connection instance to
 * MULE4-MOSQUITTO:RETRY_EXHAUSTED {nbsp}
 
 
-[[sayHi]]
-=== Say Hi
-`<mule4-mosquitto:say-hi>`
+== Sources
 
-+++
-Example of a simple operation that receives a string parameter and returns a new string message that will be set on the payload.
-+++
+[[Listener]]
+=== Listener
+`<mule4-mosquitto:listener>`
+
 
 ==== Parameters
 [cols=".^20%,.^20%,.^35%,.^20%,^.^5%", options="header"]
 |======================
 | Name | Type | Description | Default Value | Required
-| Person a| String |  |  | *x*{nbsp}
+| Configuration | String | The name of the configuration to use. | | *x*{nbsp}
+| Topic a| String |  |  +++topic-test+++ | {nbsp}
 | Output Mime Type a| String |  +++The mime type of the payload that this operation outputs.+++ |  | {nbsp}
-| Target Variable a| String |  +++The name of a variable on which the operation's output will be placed+++ |  | {nbsp}
-| Target Value a| String |  +++An expression that will be evaluated against the operation's output and the outcome of that expression will be stored in the target variable+++ |  +++#[payload]+++ | {nbsp}
+| Primary Node Only a| Boolean |  +++Whether this source should only be executed on the primary node when runnning in Cluster+++ |  | {nbsp}
+| Scheduling Strategy a| <<scheduling-strategy>> |  +++Configures the scheduler that triggers the polling+++ |  | *x*{nbsp}
+| Redelivery Policy a| <<RedeliveryPolicy>> |  +++Defines a policy for processing the redelivery of the same message+++ |  | {nbsp}
 |======================
 
 ==== Output
 [cols=".^50%,.^50%"]
 |======================
 | *Type* a| String
+| *Attributes Type* a| Any
 |======================
 
-
+==== For Configurations.
+* <<config>> {nbsp}
 
 
 
@@ -193,5 +196,18 @@ Example of a simple operation that receives a string parameter and returns a new
 ** MINUTES
 ** HOURS
 ** DAYS | A time unit that qualifies the maxIdleTime attribute |  | 
+|======================
+
+[[RedeliveryPolicy]]
+=== Redelivery Policy
+
+[cols=".^20%,.^25%,.^30%,.^15%,.^10%", options="header"]
+|======================
+| Field | Type | Description | Default Value | Required
+| Max Redelivery Count a| Number | The maximum number of times a message can be redelivered and processed unsuccessfully before triggering process-failed-message |  | 
+| Use Secure Hash a| Boolean | Whether to use a secure hash algorithm to identify a redelivered message |  | 
+| Message Digest Algorithm a| String | The secure hashing algorithm to use. If not set, the default is SHA-256. |  | 
+| Id Expression a| String | Defines one or more expressions to use to determine when a message has been redelivered. This property may only be set if useSecureHash is false. |  | 
+| Object Store a| <<ObjectStore>> | The object store where the redelivery counter for each message is going to be stored. |  | 
 |======================
 

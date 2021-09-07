@@ -3,10 +3,10 @@
     "id": "java",
     "attributes": {
       "type": "com.kricom.mosquitto.internal.Mule4mosquittoExtension",
-      "version": "0.0.1-SNAPSHOT"
+      "version": "0.0.1-SNAPSHOT-a24"
     }
   },
-  "name": "Mule4-mosquitto-",
+  "name": "Mosquitto",
   "requiredProduct": "MULE",
   "classLoaderModelLoaderDescriptor": {
     "id": "mule",

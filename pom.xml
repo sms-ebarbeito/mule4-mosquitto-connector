@@ -6,14 +6,37 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ar.kricom.muleConnector</groupId>
     <artifactId>mule4-mosquito-connector</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT-a24</version>
     <packaging>mule-extension</packaging>
-    <name>Mule4-mosquitto- Extension</name>
+    <name>Mosquitto</name>
 
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-modules-parent</artifactId>
         <version>1.1.3</version>
     </parent>
+
+    <repositories>
+        <repository>
+            <id>mvn-repository</id>
+            <url>https://mvnrepository.com/repos/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+    </dependencies>
+
+
 
 </project>
