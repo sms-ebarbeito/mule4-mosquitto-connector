@@ -4,11 +4,14 @@ import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
 import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnection;
 import com.kricom.mosquitto.internal.utils.MosquittoUtils;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
 
 import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
 
@@ -23,7 +26,7 @@ public class PublishOperation {
   @MediaType(value = ANY, strict = false)
   public String publish(@Config Mule4mosquittoConfiguration config,
                         @Connection Mule4mosquittoConnection connection,
-                        String payload,
+                        InputStream payload,
                         String topic,
                         @Optional(defaultValue = "2") int qos) throws Exception {
 
@@ -35,7 +38,7 @@ public class PublishOperation {
     }
 
     LOGGER.debug("Publishing message");
-    MqttMessage message = new MqttMessage(payload.getBytes());
+    MqttMessage message = new MqttMessage(IOUtils.toByteArray(payload));
     message.setQos(qos);
     mutils.getClient().publish(topic, message);
     LOGGER.debug("Message published");
