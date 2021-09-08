@@ -1,14 +1,14 @@
 {
   "name": "Mosquitto",
   "description": "This is the main class of an extension, is the entry point from which configurations, connection providers, operations and sources are going to be declared.",
-  "version": "1.0.1-SNAPSHOT-a7",
+  "version": "1.0.1",
   "vendor": "ar.kricom",
   "category": "COMMUNITY",
   "xmlDsl": {
     "prefix": "mule4-mosquitto",
     "namespace": "http://www.mulesoft.org/schema/mule/mule4-mosquitto",
     "schemaLocation": "http://www.mulesoft.org/schema/mule/mule4-mosquitto/current/mule-mule4-mosquitto.xsd",
-    "schemaVersion": "1.0.1-SNAPSHOT-a7",
+    "schemaVersion": "1.0.1",
     "xsdFileName": "mule-mule4-mosquitto.xsd"
   },
   "resources": [],
@@ -1245,7 +1245,47 @@
           "outputAttributes": {
             "type": {
               "format": "java",
-              "type": "String"
+              "type": "Object",
+              "annotations": {
+                "classInformation": {
+                  "classname": "java.util.Map",
+                  "hasDefaultConstructor": false,
+                  "isInterface": true,
+                  "isInstantiable": false,
+                  "isAbstract": true,
+                  "isFinal": false,
+                  "implementedInterfaces": [],
+                  "parent": "",
+                  "genericTypes": [
+                    "java.lang.String",
+                    "java.lang.Object"
+                  ],
+                  "isMap": true
+                }
+              },
+              "open": {
+                "type": "Object",
+                "annotations": {
+                  "typeId": "java.lang.Object",
+                  "classInformation": {
+                    "classname": "java.lang.Object",
+                    "hasDefaultConstructor": true,
+                    "isInterface": false,
+                    "isInstantiable": true,
+                    "isAbstract": false,
+                    "isFinal": false,
+                    "implementedInterfaces": [],
+                    "parent": "",
+                    "genericTypes": [],
+                    "isMap": false
+                  },
+                  "typeAlias": {
+                    "value": "Object"
+                  }
+                },
+                "fields": []
+              },
+              "fields": []
             },
             "hasDynamicType": false,
             "description": "",

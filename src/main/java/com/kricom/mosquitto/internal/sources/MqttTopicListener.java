@@ -3,6 +3,8 @@ package com.kricom.mosquitto.internal.sources;
 import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
 import com.kricom.mosquitto.internal.utils.MosquittoUtils;
 import org.eclipse.paho.client.mqttv3.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -17,9 +19,17 @@ import org.mule.runtime.extension.api.runtime.source.PollingSource;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.*;
 
 import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
@@ -28,7 +38,7 @@ import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
 @Alias("Listener")
 @Summary("Suscribe to Topic and listen for incoming messages")
 @MediaType(value = ANY, strict = false)
-public class MqttTopicListener extends PollingSource<InputStream, String> {
+public class MqttTopicListener extends PollingSource<InputStream, Map<String, Object>> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(MqttTopicListener.class);
 
@@ -84,7 +94,7 @@ public class MqttTopicListener extends PollingSource<InputStream, String> {
     }
 
     @Override
-    public void poll(PollContext<InputStream, String> pollContext) {
+    public void poll(PollContext<InputStream, Map<String, Object>> pollContext) {
         if (pollContext.isSourceStopping()) {
             return;
         }
@@ -105,13 +115,38 @@ public class MqttTopicListener extends PollingSource<InputStream, String> {
      * @param message
      * @return
      */
-    private Result<InputStream, String> read(MqttMessage message) {
+    private Result<InputStream, Map<String, Object>> read(MqttMessage message) {
         InputStream payload = new ByteArrayInputStream(message.getPayload());
-        //TODO: Replace string attribute to Object and complete with message information
-        String attributes = "Qos: " + message.getQos();
-        //TODO: JSON IS HARDCODED, need a method to check payload mediatype
-        org.mule.runtime.api.metadata.MediaType media = org.mule.runtime.api.metadata.MediaType.APPLICATION_JSON;
-        return Result.<InputStream, String>builder()
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("qos", new Integer(message.getQos()));
+        attributes.put("id", message.getId());
+        attributes.put("isDuplicated", message.isDuplicate());
+        attributes.put("isRetained", message.isRetained());
+
+        //TODO: ONLY JSON AND XML IS CHECKED, need a method to check payload mediatype
+
+        //By default ANY is set
+        org.mule.runtime.api.metadata.MediaType media = org.mule.runtime.api.metadata.MediaType.ANY;
+        String payloadString = new String(message.getPayload());
+
+        //Check if payload could be a Json
+        try {
+            JSONObject json = new JSONObject(payloadString);
+            media = org.mule.runtime.api.metadata.MediaType.APPLICATION_JSON;
+        } catch (JSONException e) {
+            //Check if payload could be a xml
+            try {
+                DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+                Document document = docBuilder.parse(new InputSource(new StringReader(payloadString)));
+                media = org.mule.runtime.api.metadata.MediaType.APPLICATION_XML;
+            } catch (ParserConfigurationException e1) {
+            } catch (IOException ioException) {
+            } catch (SAXException saxException) {
+            }
+        }
+
+        return Result.<InputStream, Map<String, Object>>builder()
                 .output(payload)
                 .attributes(attributes)
                 .mediaType(media)
@@ -119,8 +154,8 @@ public class MqttTopicListener extends PollingSource<InputStream, String> {
     }
 
     @Override
-    public void onRejectedItem(Result<InputStream, String> result, SourceCallbackContext sourceCallbackContext) {
-
+    public void onRejectedItem(Result<InputStream, Map<String, Object>> result, SourceCallbackContext sourceCallbackContext) {
+        //TODO ???
     }
 
     /**

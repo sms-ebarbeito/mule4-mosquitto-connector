@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ar.kricom.muleConnector</groupId>
     <artifactId>mule4-mosquito-connector</artifactId>
-    <version>1.0.1-SNAPSHOT-a7</version>
+    <version>1.0.2-SNAPSHOT-a1</version>
     <packaging>mule-extension</packaging>
     <name>Mosquitto</name>
 
@@ -34,6 +34,11 @@
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
             <version>1.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20210307</version>
         </dependency>
     </dependencies>
 

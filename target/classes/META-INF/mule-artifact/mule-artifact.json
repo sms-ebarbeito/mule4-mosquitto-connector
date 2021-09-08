@@ -3,7 +3,7 @@
     "id": "java",
     "attributes": {
       "type": "com.kricom.mosquitto.internal.Mule4mosquittoExtension",
-      "version": "1.0.1-SNAPSHOT-a7"
+      "version": "1.0.1"
     }
   },
   "name": "Mosquitto",

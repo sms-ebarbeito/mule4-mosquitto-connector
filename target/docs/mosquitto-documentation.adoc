@@ -121,7 +121,7 @@ Default configuration
 [cols=".^50%,.^50%"]
 |======================
 | *Type* a| Binary
-| *Attributes Type* a| String
+| *Attributes Type* a| Object
 |======================
 
 ==== For Configurations.
