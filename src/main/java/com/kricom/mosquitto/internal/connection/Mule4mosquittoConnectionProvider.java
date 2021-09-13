@@ -3,8 +3,13 @@ package com.kricom.mosquitto.internal.connection;
 import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
 import org.mule.runtime.api.connection.*;
 import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
 
 /**
@@ -22,14 +27,37 @@ public class Mule4mosquittoConnectionProvider implements PoolingConnectionProvid
 
   private final Logger LOGGER = LoggerFactory.getLogger(Mule4mosquittoConnectionProvider.class);
 
-  @Config
-  private Mule4mosquittoConfiguration config;
+  @DisplayName("Mosquitto Host")
+  @Optional(defaultValue = "localhost")
+  @Parameter
+  private String host;
+
+  @DisplayName("Mosquitto Port")
+  @Optional(defaultValue = "1883")
+  @Parameter
+  private int port;
+
+  @DisplayName("User Name")
+  @Optional(defaultValue = "mule")
+  @Parameter
+  private String userName;
+
+  @DisplayName("Password")
+  @Optional(defaultValue = "max")
+  @Password
+  @Parameter
+  private String password;
+
+  @DisplayName("Client Id")
+  @Optional(defaultValue = "mule-mosquito-client")
+  @Parameter
+  private String clientId;
 
   @Override
   public Mule4mosquittoConnection connect() throws ConnectionException {
 //    MosquittoUtils mutils = MosquittoUtils.getInstance();
 //    mutils.connect(config);
-    return new Mule4mosquittoConnection("bla bla bla");
+    return new Mule4mosquittoConnection(host, port, userName, password, clientId);
   }
 
   @Override
@@ -43,6 +71,13 @@ public class Mule4mosquittoConnectionProvider implements PoolingConnectionProvid
 
   @Override
   public ConnectionValidationResult validate(Mule4mosquittoConnection connection) {
-    return ConnectionValidationResult.success();
+      ConnectionValidationResult result;
+      if(connection.isConnected()){
+        result = ConnectionValidationResult.success();
+      } else {
+        result = ConnectionValidationResult.failure("Connection failed " + connection.getId(), new Exception());
+      }
+
+      return result;
   }
 }

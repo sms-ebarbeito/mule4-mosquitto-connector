@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ar.kricom.muleConnector</groupId>
     <artifactId>mule4-mosquito-connector</artifactId>
-    <version>1.0.2-SNAPSHOT-a1</version>
+    <version>1.0.2-SNAPSHOT-a13</version>
     <packaging>mule-extension</packaging>
     <name>Mosquitto</name>
 
