@@ -1,15 +1,12 @@
 package com.kricom.mosquitto.internal.connection;
 
-import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
 import org.mule.runtime.api.connection.*;
-import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 
 /**
@@ -23,9 +20,9 @@ import org.springframework.beans.factory.annotation.Required;
  * will be pooled and reused. There are other implementations like {@link CachedConnectionProvider} which lazily creates and
  * caches connections or simply {@link ConnectionProvider} if you want a new connection each time something requires one.
  */
-public class Mule4mosquittoConnectionProvider<Mule4mosquitoConnection> implements PoolingConnectionProvider<Mule4mosquittoConnection> {
+public class MosquittoConnectionProvider<Mule4mosquitoConnection> implements PoolingConnectionProvider<MosquittoConnection> {
 
-  private final Logger LOGGER = LoggerFactory.getLogger(Mule4mosquittoConnectionProvider.class);
+  private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnectionProvider.class);
 
   @DisplayName("Mosquitto Host")
   @Optional(defaultValue = "localhost")
@@ -55,13 +52,13 @@ public class Mule4mosquittoConnectionProvider<Mule4mosquitoConnection> implement
 
   private static int clientIdCount = 1;
 
-  private Mule4mosquittoConnection connection;
+  private MosquittoConnection connection;
 
   @Override
-  public Mule4mosquittoConnection connect() throws ConnectionException {
+  public MosquittoConnection connect() throws ConnectionException {
     synchronized (this){
       if (connection == null){
-        connection = new Mule4mosquittoConnection(host, port, userName, password, clientId+"-"+clientIdCount);
+        connection = new MosquittoConnection(host, port, userName, password, clientId+"-"+clientIdCount);
         LOGGER.info("PROVIDER connect() clientId counter = " + clientIdCount);
         clientIdCount++;
         int i = 0;
@@ -79,7 +76,7 @@ public class Mule4mosquittoConnectionProvider<Mule4mosquitoConnection> implement
   }
 
   @Override
-  public void disconnect(Mule4mosquittoConnection connection) {
+  public void disconnect(MosquittoConnection connection) {
     try {
       LOGGER.error("disconnect provider invoked [" + connection.getId() + "]: ");
       connection.invalidate();
@@ -89,7 +86,7 @@ public class Mule4mosquittoConnectionProvider<Mule4mosquitoConnection> implement
   }
 
   @Override
-  public ConnectionValidationResult validate(Mule4mosquittoConnection connection) {
+  public ConnectionValidationResult validate(MosquittoConnection connection) {
       ConnectionValidationResult result;
       if(connection.isConnected()){
         result = ConnectionValidationResult.success();

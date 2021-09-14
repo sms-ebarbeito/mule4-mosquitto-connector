@@ -1,7 +1,7 @@
 package com.kricom.mosquitto.internal.operations;
 
-import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
-import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnection;
+import com.kricom.mosquitto.internal.MosquittoConfiguration;
+import com.kricom.mosquitto.internal.connection.MosquittoConnection;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -23,8 +23,8 @@ public class PublishOperation {
   private final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(PublishOperation.class);
 
   @MediaType(value = ANY, strict = false)
-  public String publish(@Config Mule4mosquittoConfiguration config,
-                        @Connection Mule4mosquittoConnection connection,
+  public String publish(@Config MosquittoConfiguration config,
+                        @Connection MosquittoConnection connection,
                         InputStream payload,
                         String topic,
                         @Optional(defaultValue = "2") int qos) throws Exception {

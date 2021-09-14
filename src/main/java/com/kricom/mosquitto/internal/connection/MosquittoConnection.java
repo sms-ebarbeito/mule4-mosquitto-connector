@@ -1,21 +1,19 @@
 package com.kricom.mosquitto.internal.connection;
 
 
-import com.kricom.mosquitto.internal.Mule4mosquittoConfiguration;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.mule.runtime.extension.api.annotation.param.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class represents an extension connection just as example (there is no real connection with anything here c:).
  */
-public final class Mule4mosquittoConnection {
+public final class MosquittoConnection {
 
-  private final Logger LOGGER = LoggerFactory.getLogger(Mule4mosquittoConnection.class);
+  private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnection.class);
 
   private MqttClient mqttClient = null;
 
@@ -25,7 +23,7 @@ public final class Mule4mosquittoConnection {
   String password;
   String clientId;
 
-  public Mule4mosquittoConnection(String host, int port, String userName, String password, String clientId) {
+  public MosquittoConnection(String host, int port, String userName, String password, String clientId) {
     this.host = host;
     this.port = port;
     this.userName = userName;

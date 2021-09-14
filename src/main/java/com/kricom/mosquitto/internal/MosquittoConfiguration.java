@@ -1,6 +1,6 @@
 package com.kricom.mosquitto.internal;
 
-import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnectionProvider;
+import com.kricom.mosquitto.internal.connection.MosquittoConnectionProvider;
 import com.kricom.mosquitto.internal.operations.PublishOperation;
 import com.kricom.mosquitto.internal.sources.TopicListener;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -13,8 +13,8 @@ import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProvider
  */
 @Operations({PublishOperation.class})
 @Sources({TopicListener.class})
-@ConnectionProviders(Mule4mosquittoConnectionProvider.class)
-public class Mule4mosquittoConfiguration {
+@ConnectionProviders(MosquittoConnectionProvider.class)
+public class MosquittoConfiguration {
 
 
 }

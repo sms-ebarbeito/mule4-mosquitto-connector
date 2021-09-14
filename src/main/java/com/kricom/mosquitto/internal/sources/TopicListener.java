@@ -1,7 +1,6 @@
 package com.kricom.mosquitto.internal.sources;
 
-import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnection;
-import com.kricom.mosquitto.internal.connection.Mule4mosquittoConnectionProvider;
+import com.kricom.mosquitto.internal.connection.MosquittoConnection;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -10,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.core.api.connector.ConnectException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -22,7 +20,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.PollContext;
 import org.mule.runtime.extension.api.runtime.source.PollingSource;
-import org.mule.runtime.extension.api.runtime.source.SourceCallback;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +57,9 @@ public class TopicListener extends PollingSource<InputStream, Map<String, Object
     private String topic;
 
     @Connection
-    ConnectionProvider<Mule4mosquittoConnection> connectionProvider;
+    ConnectionProvider<MosquittoConnection> connectionProvider;
 
-    Mule4mosquittoConnection connection;
+    MosquittoConnection connection;
 
     @Override
     protected void doStart() throws MuleException {

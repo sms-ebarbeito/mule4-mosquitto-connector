@@ -12,8 +12,8 @@ import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
  */
 @Xml(prefix = "mule4-mosquitto")
 @Extension(name = "Mosquitto", vendor = "ar.kricom", category = Category.COMMUNITY)
-@Configurations(Mule4mosquittoConfiguration.class)
+@Configurations(MosquittoConfiguration.class)
 
-public class Mule4mosquittoExtension {
+public class MosquittoExtension {
 
 }
