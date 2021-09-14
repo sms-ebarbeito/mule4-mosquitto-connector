@@ -97,9 +97,6 @@ public final class Mule4mosquittoConnection {
   }
 
   public MqttClient getClient() {
-    if (!this.isConnected()) {
-      this.reconnect();
-    }
     return mqttClient;
   }
 }

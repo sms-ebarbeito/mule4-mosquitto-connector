@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Required;
  * will be pooled and reused. There are other implementations like {@link CachedConnectionProvider} which lazily creates and
  * caches connections or simply {@link ConnectionProvider} if you want a new connection each time something requires one.
  */
-public class Mule4mosquittoConnectionProvider implements PoolingConnectionProvider<Mule4mosquittoConnection> {
+public class Mule4mosquittoConnectionProvider<Mule4mosquitoConnection> implements PoolingConnectionProvider<Mule4mosquittoConnection> {
 
   private final Logger LOGGER = LoggerFactory.getLogger(Mule4mosquittoConnectionProvider.class);
 
@@ -53,16 +53,35 @@ public class Mule4mosquittoConnectionProvider implements PoolingConnectionProvid
   @Parameter
   private String clientId;
 
+  private static int clientIdCount = 1;
+
+  private Mule4mosquittoConnection connection;
+
   @Override
   public Mule4mosquittoConnection connect() throws ConnectionException {
-//    MosquittoUtils mutils = MosquittoUtils.getInstance();
-//    mutils.connect(config);
-    return new Mule4mosquittoConnection(host, port, userName, password, clientId);
+    synchronized (this){
+      if (connection == null){
+        connection = new Mule4mosquittoConnection(host, port, userName, password, clientId+"-"+clientIdCount);
+        LOGGER.info("PROVIDER connect() clientId counter = " + clientIdCount);
+        clientIdCount++;
+        int i = 0;
+        while (!connection.isConnected()) {
+          try { Thread.sleep(100); } catch (Exception e) { }
+          if (i >= 20) {
+            LOGGER.error("Unable to connect to mqtt broker");
+            i++;
+            break;
+          }
+        }
+      }
+    }
+    return connection;
   }
 
   @Override
   public void disconnect(Mule4mosquittoConnection connection) {
     try {
+      LOGGER.error("disconnect provider invoked [" + connection.getId() + "]: ");
       connection.invalidate();
     } catch (Exception e) {
       LOGGER.error("Error while disconnecting [" + connection.getId() + "]: " + e.getMessage(), e);
