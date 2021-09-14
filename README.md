@@ -10,7 +10,7 @@ Add this dependency to your application pom.xml
 ```
 <groupId>ar.kricom.muleConnector</groupId>
 <artifactId>mule4-mosquito-connector</artifactId>
-<version>1.0.0</version>
+<version>1.0.3</version>
 <classifier>mule-plugin</classifier>
 ```
 
