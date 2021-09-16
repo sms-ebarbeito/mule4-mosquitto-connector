@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MosquittoConnectionMock extends MosquittoConnection {
 
-  private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnectionMock.class);
-
   private MqttClientMock mqttClient = null;
 
   public MosquittoConnectionMock(String host, int port, String userName, String password, String clientId) {
@@ -31,7 +29,8 @@ public class MosquittoConnectionMock extends MosquittoConnection {
     disconnect();
   }
 
-  private MqttClient connect() {
+  @Override
+  protected MqttClient connect() {
     String brokerUrl ="tcp://" + host + ":" + port;
     MemoryPersistence persistence = new MemoryPersistence();
     try {

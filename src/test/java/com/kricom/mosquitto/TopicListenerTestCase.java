@@ -5,19 +5,22 @@ import com.kricom.mosquitto.internal.connection.MosquittoConnectionMock;
 import com.kricom.mosquitto.internal.connection.MosquittoConnectionProviderMock;
 import com.kricom.mosquitto.internal.sources.TopicListener;
 import com.kricom.mosquitto.mock.MqttClientMock;
-import com.kricom.mosquitto.mock.PollContextMock;
+import com.kricom.mosquitto.mock.SourceCallBackMock;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Before;
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.mule.runtime.api.metadata.MediaType;
 
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -28,7 +31,7 @@ public class TopicListenerTestCase {
   private MosquittoConnectionMock connection;
   private TopicListener listener;
 
-  private PollContextMock<InputStream, Map<String, Object>> context;
+  private SourceCallBackMock<InputStream, Map<String, Object>> sourceCallback;
 
   @Before
   public void prepareListener() throws Exception {
@@ -47,19 +50,16 @@ public class TopicListenerTestCase {
     connectionProviderField.set(listener, provider);
     connectionField.setAccessible(true);
     connectionField.set(listener, connection);
-    Method doStart = listenerClass.getDeclaredMethod("doStart");
-    doStart.setAccessible(true);
-    doStart.invoke(listener);
-
-    context = new PollContextMock<InputStream, Map<String, Object>>();
+    sourceCallback = new SourceCallBackMock<InputStream, Map<String, Object>>();
+    listener.onStart(sourceCallback);
   }
 
-  private MqttMessage getMessageFromConsumer(Consumer consumer) throws Exception {
-    Class<?> consumerClass = consumer.getClass();
-    Field consumerGetLambdaField = consumerClass.getDeclaredField("arg$2");
-    consumerGetLambdaField.setAccessible(true);
-    return (MqttMessage) consumerGetLambdaField.get(context.getConsumer());
+  private String getMessageFromResult() throws Exception {
+      return new BufferedReader(
+              new InputStreamReader(sourceCallback.getResult().getOutput(), StandardCharsets.UTF_8))
+              .lines().collect(Collectors.joining(""));
   }
+
 
   @Test
   public void textTopicListenerOperation() throws Exception {
@@ -73,10 +73,14 @@ public class TopicListenerTestCase {
     msg.setPayload(originalMessage.getBytes());
     callback.messageArrived("mule-test", msg);
 
-    listener.poll(context);
+    Map<String, Object> attrib = sourceCallback.getResult().getAttributes().get();
+    assertThat(attrib.get("topic"), is("mule-test"));
+    assertThat(attrib.get("qos"), is(2));
 
-    MqttMessage mqttMessage = getMessageFromConsumer(context.getConsumer());
-    assertThat(new String(mqttMessage.getPayload()), is("Hello from JUnit test"));
+    assertThat(new String(getMessageFromResult()), is("Hello from JUnit test"));
+
+    MediaType mediaType = sourceCallback.getResult().getMediaType().get();
+    assertThat(mediaType, is(MediaType.ANY));
   }
 
   @Test
@@ -91,10 +95,14 @@ public class TopicListenerTestCase {
     msg.setPayload(originalMessage.getBytes());
     callback.messageArrived("mule-test", msg);
 
-    listener.poll(context);
+    Map<String, Object> attrib = sourceCallback.getResult().getAttributes().get();
+    assertThat(attrib.get("topic"), is("mule-test"));
+    assertThat(attrib.get("qos"), is(2));
 
-    MqttMessage mqttMessage = getMessageFromConsumer(context.getConsumer());
-    assertThat(new String(mqttMessage.getPayload()), is(originalMessage));
+    assertThat(new String(getMessageFromResult()), is(originalMessage));
+
+    MediaType mediaType = sourceCallback.getResult().getMediaType().get();
+    assertThat(mediaType, is(MediaType.APPLICATION_JSON));
   }
 
   @Test
@@ -109,10 +117,14 @@ public class TopicListenerTestCase {
     msg.setPayload(originalMessage.getBytes());
     callback.messageArrived("mule-test", msg);
 
-    listener.poll(context);
+    Map<String, Object> attrib = sourceCallback.getResult().getAttributes().get();
+    assertThat(attrib.get("topic"), is("mule-test"));
+    assertThat(attrib.get("qos"), is(2));
 
-    MqttMessage mqttMessage = getMessageFromConsumer(context.getConsumer());
-    assertThat(new String(mqttMessage.getPayload()), is(originalMessage));
+    assertThat(new String(getMessageFromResult()), is(originalMessage));
+
+    MediaType mediaType = sourceCallback.getResult().getMediaType().get();
+    assertThat(mediaType, is(MediaType.APPLICATION_XML));
   }
 
 }

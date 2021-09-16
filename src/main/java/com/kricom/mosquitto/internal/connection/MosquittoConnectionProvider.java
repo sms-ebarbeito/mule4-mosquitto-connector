@@ -61,15 +61,6 @@ public class MosquittoConnectionProvider<Mule4mosquitoConnection> implements Poo
         connection = new MosquittoConnection(host, port, userName, password, clientId+"-"+clientIdCount);
         LOGGER.info("PROVIDER connect() clientId counter = " + clientIdCount);
         clientIdCount++;
-        int i = 0;
-        while (!connection.isConnected()) {
-          try { Thread.sleep(100); } catch (Exception e) { }
-          if (i >= 20) {
-            LOGGER.error("Unable to connect to mqtt broker");
-            i++;
-            break;
-          }
-        }
       }
     }
     return connection;
