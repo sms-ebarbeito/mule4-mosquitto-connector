@@ -1,19 +1,23 @@
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:mule4-mosquitto="http://www.mulesoft.org/schema/mule/mule4-mosquitto"
-      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-          http://www.mulesoft.org/schema/mule/mule4-mosquitto http://www.mulesoft.org/schema/mule/mule4-mosquitto/current/mule-mule4-mosquitto.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
 
-    <mule4-mosquitto:config name="config" configId="configId">
-        <mule4-mosquitto:connection requiredParameter="aValue" />
+<mule xmlns:kafka="http://www.mulesoft.org/schema/mule/kafka" xmlns:mule4-mosquitto="http://www.mulesoft.org/schema/mule/mule4-mosquitto"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:samba="http://www.mulesoft.org/schema/mule/samba" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mule4-mosquitto http://www.mulesoft.org/schema/mule/mule4-mosquitto/current/mule-mule4-mosquitto.xsd">
+    <mule4-mosquitto:config name="Mosquitto_Config" doc:name="Mosquitto Config" doc:id="1ec73de2-c365-4150-851b-2c59d537a350" >
+        <mule4-mosquitto:connection host="localhost" userName="mosquito-username" password="ultra-strong-password" />
     </mule4-mosquitto:config>
-
-    <flow name="sayHiFlow">
-        <mule4-mosquitto:say-hi person="Mariano Gonzalez"/>
+    <flow name="publish" doc:id="dfb81220-0eeb-4a5f-a970-18cb57316ffa" >
+        <logger level="INFO" doc:name="Logger" doc:id="f2974dcf-41d0-4c23-9618-148c5366ff99" />
+        <mule4-mosquitto:publish doc:name="Publish" doc:id="da8c56e1-8821-46ad-8e20-0008b5bcb620" payload='#[%dw 2.0&#10;output application/json&#10;---&#10;{"clientId":"TST-XXXXXX","message": "This is a test"}]' topic="prueba-mule" config-ref="Mosquitto_Config"/>
     </flow>
-
-    <flow name="retrieveInfoFlow">
-        <mule4-mosquitto:retrieve-info config-ref="config"/>
+    <flow name="listener" doc:id="955527dd-93cb-454c-bbe6-aef07c5f12ee" initialState="started">
+        <mule4-mosquitto:listener doc:name="Listener" doc:id="b1854c89-a7a7-41bf-bd82-56615bd415dc" topic="prueba-mule" config-ref="Mosquitto_Config">
+            <scheduling-strategy >
+                <fixed-frequency />
+            </scheduling-strategy>
+        </mule4-mosquitto:listener>
+        <logger level="INFO" doc:name="Logger" doc:id="af1c67ba-3e15-4eee-b1ad-94b6481a646e" message="#[payload]"/>
     </flow>
-
 </mule>
