@@ -18,9 +18,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
-import org.mule.runtime.extension.api.runtime.source.PollContext;
-import org.mule.runtime.extension.api.runtime.source.PollingSource;
-import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
+import org.mule.runtime.extension.api.runtime.source.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -44,32 +42,38 @@ import static org.mule.runtime.extension.api.annotation.param.MediaType.ANY;
 @Alias("Listener")
 @Summary("Suscribe to Topic and listen for incoming messages")
 @MediaType(value = ANY, strict = false)
-public class TopicListener extends PollingSource<InputStream, Map<String, Object>>  {
+public class TopicListener extends Source<InputStream, Map<String, Object>> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(TopicListener.class);
 
-    protected static Map<String, Queue<MqttMessage>> incommingMessages = new HashMap<String, Queue<MqttMessage>>();
 
     @Parameter
     @Example("Topic to subscribe client and listener to mqtt messages")
     @Optional(defaultValue = "topic")
     @Placement(order = 1)
-    private String topic;
+    protected String topic;
 
     @Connection
     ConnectionProvider<MosquittoConnection> connectionProvider;
 
     MosquittoConnection connection;
 
-    @Override
-    protected void doStart() throws MuleException {
-        connection = connectionProvider.connect();
+    protected static Map<String, SourceCallback<InputStream, Map<String, Object>>> sourcesCallBacks = new HashMap<String, SourceCallback<InputStream, Map<String, Object>>>();
 
+    protected static void pushPayload(String topic, MqttMessage message) throws Exception {
+        Result<InputStream, Map<String, Object>> result = read(topic, message);
+
+        sourcesCallBacks.get(topic).handle(result);
+    }
+
+    @Override
+    public void onStart(SourceCallback<InputStream, Map<String, Object>> sourceCallback) throws MuleException {
+        connection = connectionProvider.connect();
+        LOGGER.info("onStart --> Thread: " + Thread.currentThread());
         synchronized (this){
             try {
+                    sourcesCallBacks.put(topic, sourceCallback);
                     connection.getClient().subscribe(topic);
-                    //Create Object Store
-                    this.createQueue(topic);
                     connection.getClient().setCallback(callback);
             } catch (MqttException e) {
                 LOGGER.error("Could not subscribe to topic");
@@ -80,7 +84,7 @@ public class TopicListener extends PollingSource<InputStream, Map<String, Object
     }
 
     @Override
-    protected void doStop() {
+    public void onStop() {
         LOGGER.debug("MqttTopicListener --> doStop()");
         try {
             connection.getClient().unsubscribe(topic);
@@ -90,32 +94,15 @@ public class TopicListener extends PollingSource<InputStream, Map<String, Object
         connectionProvider.disconnect(connection);
     }
 
-    @Override
-    public void poll(PollContext<InputStream, Map<String, Object>> pollContext) {
-        MqttMessage message = pollMessage(topic);
-        if (message == null) { //If null there is no new messages!
-            return;
-        }
-        LOGGER.debug("Message extracted from Queue: " + message);
-        //Add message to payload
-        pollContext.accept(item -> {
-            item.setResult(read(message));
-        });
-    }
-
-    @Override
-    public void onRejectedItem(Result<InputStream, Map<String, Object>> result, SourceCallbackContext sourceCallbackContext) {
-        // TODO: What need to do this????
-    }
-
     /**
      * Transform mqtt message to mule result to run outside connector as payload
      * @param message
      * @return
      */
-    private Result<InputStream, Map<String, Object>> read(MqttMessage message) {
+    private static Result<InputStream, Map<String, Object>> read(String topic, MqttMessage message) {
         InputStream payload = new ByteArrayInputStream(message.getPayload());
         Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("topic", topic);
         attributes.put("qos", new Integer(message.getQos()));
         attributes.put("id", message.getId());
         attributes.put("isDuplicated", message.isDuplicate());
@@ -151,61 +138,28 @@ public class TopicListener extends PollingSource<InputStream, Map<String, Object
                 .build();
     }
 
-    /*****************************************************************************************************
-     * TODO: Transform to Object Store
-     *****************************************************************************************************/
-    /**
-     * Add a new message on Store
-     * @param topic
-     * @param message
-     */
-    protected void addMessage(String topic, MqttMessage message) {
-        synchronized (this){
-            Queue<MqttMessage> messages = this.incommingMessages.get(topic);
-            if (messages != null){
-                messages.add(message);
-            }
-        }
-    }
 
-    /**
-     * Creates a new entry on MAP to store Messages
-     * @param topic
-     */
-    private void createQueue(String topic) {
-        synchronized (this) {
-            if (incommingMessages.get(topic) == null) {
-                incommingMessages.put(topic, new LinkedList<MqttMessage>());
-            }
-        }
 
-    }
-
-    /**
-     * Extract the first message on the Queue
-     * @return
-     */
-    protected MqttMessage pollMessage(String topic) {
-        synchronized (this){
-            Queue<MqttMessage> messages = this.incommingMessages.get(topic);
-            if (messages != null){
-                return messages.poll();
-            }
-            return null;
-        }
-    }
 
 
     /**********************************************************************
      * MQTT Callback class
      **********************************************************************/
 
-    MqttCallback callback = new MqttCallback() {
+    static MqttCallback callback = new MqttCallback() {
+
+        private final Logger LOGGER = LoggerFactory.getLogger(MqttCallback.class);
+
+        public SourceCallback<InputStream, Map<String, Object>> sourceCallback;
 
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
-//            LOGGER.debug("Topic: " + topic + " - Message: " + message.toString());
-            addMessage(topic, message);
+            if (message == null) { //If null there is no new messages!
+                return;
+            }
+
+            pushPayload(topic, message);
+
         }
 
         @Override
@@ -218,5 +172,7 @@ public class TopicListener extends PollingSource<InputStream, Map<String, Object
             LOGGER.error("Conection LOST!!");
             cause.printStackTrace();
         }
+
     };
+
 }

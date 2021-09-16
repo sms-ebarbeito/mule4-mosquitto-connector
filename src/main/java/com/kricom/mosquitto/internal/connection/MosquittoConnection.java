@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MosquittoConnection {
 
-  private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnection.class);
+  protected final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnection.class);
 
   private MqttClient mqttClient = null;
 
@@ -29,6 +29,7 @@ public class MosquittoConnection {
     this.userName = userName;
     this.password = password;
     this.clientId = clientId;
+    connect();
   }
 
   public String getId() {
@@ -39,7 +40,7 @@ public class MosquittoConnection {
     disconnect();
   }
 
-  private MqttClient connect() {
+  protected MqttClient connect() {
     String brokerUrl ="tcp://" + host + ":" + port;
     MemoryPersistence persistence = new MemoryPersistence();
     try {
