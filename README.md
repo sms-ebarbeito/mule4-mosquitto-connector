@@ -1,22 +1,36 @@
 # Mule4-mosquitto-connector
-![](https://raw.githubusercontent.com/sms-ebarbeito/mule4-mosquitto-connector/main/icon/icon.svg?token=AVAE5LK6UBIDCWZKFL7MUB3BG7F6S)
+![](documentation/mosquitto-text-side-28.png)
 
-
-This is a Mule Connector to Mosquitto queue
+This is a Mule Connector to Eclipse Mosquitto mqtt queue
 
 
 Add this dependency to your application pom.xml
 
 ```
-<groupId>ar.kricom.muleConnector</groupId>
-<artifactId>mule4-mosquito-connector</artifactId>
-<version>1.0.3</version>
-<classifier>mule-plugin</classifier>
+<dependency>
+    <groupId>ar.kricom.muleConnector</groupId>
+    <artifactId>mule4-mosquito-connector</artifactId>
+    <version>1.0.3</version>
+    <classifier>mule-plugin</classifier>
+</dependency>
 ```
 
-To install 
+To install into your local .m2 repository:
 ```
 mvn clean install
 ```
+## How to use
 
-###End
+Create a global configuration with Mqtt connection parameters
+
+![](documentation/general.png)
+
+Publish operation:
+
+![](documentation/Publish.png)
+
+Listener Sources:
+
+![](documentation/Listener.png)
+
+### End
