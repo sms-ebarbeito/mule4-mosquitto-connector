@@ -1,6 +1,7 @@
 package com.kricom.mosquitto.internal.connection;
 
 
+import com.kricom.mosquitto.mock.MqttClientMock;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -11,24 +12,15 @@ import org.slf4j.LoggerFactory;
 /**
  * This class represents an extension connection just as example (there is no real connection with anything here c:).
  */
-public class MosquittoConnection {
+public class MosquittoConnectionMock extends MosquittoConnection {
 
-  private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnection.class);
+  private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnectionMock.class);
 
-  private MqttClient mqttClient = null;
+  private MqttClientMock mqttClient = null;
 
-  String host;
-  int port;
-  String userName;
-  String password;
-  String clientId;
-
-  public MosquittoConnection(String host, int port, String userName, String password, String clientId) {
-    this.host = host;
-    this.port = port;
-    this.userName = userName;
-    this.password = password;
-    this.clientId = clientId;
+  public MosquittoConnectionMock(String host, int port, String userName, String password, String clientId) {
+    super(host, port, userName, password, clientId);
+    connect();
   }
 
   public String getId() {
@@ -43,10 +35,12 @@ public class MosquittoConnection {
     String brokerUrl ="tcp://" + host + ":" + port;
     MemoryPersistence persistence = new MemoryPersistence();
     try {
-      mqttClient = new MqttClient(brokerUrl, clientId, persistence);
+      mqttClient = new MqttClientMock(brokerUrl, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setUserName(userName);
-      connOpts.setPassword(password.toCharArray());
+      if(password != null) {
+        connOpts.setPassword(password.toCharArray());
+      }
       connOpts.setCleanSession(true);
       connOpts.setAutomaticReconnect(true);
       connOpts.setKeepAliveInterval(100);
