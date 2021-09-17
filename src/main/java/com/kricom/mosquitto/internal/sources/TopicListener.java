@@ -58,13 +58,7 @@ public class TopicListener extends Source<InputStream, Map<String, Object>> {
 
     MosquittoConnection connection;
 
-    protected static Map<String, SourceCallback<InputStream, Map<String, Object>>> sourcesCallBacks = new HashMap<String, SourceCallback<InputStream, Map<String, Object>>>();
-
-    protected static void pushPayload(String topic, MqttMessage message) throws Exception {
-        Result<InputStream, Map<String, Object>> result = read(topic, message);
-
-        sourcesCallBacks.get(topic).handle(result);
-    }
+    SourcesHandler sourcesHandler = SourcesHandler.getInstance();
 
     @Override
     public void onStart(SourceCallback<InputStream, Map<String, Object>> sourceCallback) throws MuleException {
@@ -72,9 +66,9 @@ public class TopicListener extends Source<InputStream, Map<String, Object>> {
         LOGGER.info("onStart --> Thread: " + Thread.currentThread());
         synchronized (this){
             try {
-                    sourcesCallBacks.put(topic, sourceCallback);
+                    sourcesHandler.addSource(topic, sourceCallback);
                     connection.getClient().subscribe(topic);
-                    connection.getClient().setCallback(callback);
+                    connection.getClient().setCallback(sourcesHandler.getCallback());
             } catch (MqttException e) {
                 LOGGER.error("Could not subscribe to topic");
                 e.printStackTrace();
@@ -93,86 +87,5 @@ public class TopicListener extends Source<InputStream, Map<String, Object>> {
         }
         connectionProvider.disconnect(connection);
     }
-
-    /**
-     * Transform mqtt message to mule result to run outside connector as payload
-     * @param message
-     * @return
-     */
-    private static Result<InputStream, Map<String, Object>> read(String topic, MqttMessage message) {
-        InputStream payload = new ByteArrayInputStream(message.getPayload());
-        Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.put("topic", topic);
-        attributes.put("qos", new Integer(message.getQos()));
-        attributes.put("id", message.getId());
-        attributes.put("isDuplicated", message.isDuplicate());
-        attributes.put("isRetained", message.isRetained());
-
-        //TODO: ONLY JSON AND XML IS CHECKED, need a method to check payload mediatype
-
-        //By default ANY is set
-        org.mule.runtime.api.metadata.MediaType media = org.mule.runtime.api.metadata.MediaType.ANY;
-        String payloadString = new String(message.getPayload());
-
-        //Check if payload could be a Json
-        try {
-            JSONObject json = new JSONObject(payloadString);
-            media = org.mule.runtime.api.metadata.MediaType.APPLICATION_JSON;
-        } catch (JSONException e) {
-            //Check if payload could be a xml
-            try {
-                DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-                Document document = docBuilder.parse(new InputSource(new StringReader(payloadString)));
-                media = org.mule.runtime.api.metadata.MediaType.APPLICATION_XML;
-            } catch (ParserConfigurationException e1) {
-            } catch (IOException ioException) {
-            } catch (SAXException saxException) {
-            }
-        }
-
-        return Result.<InputStream, Map<String, Object>>builder()
-                .output(payload)
-                .attributes(attributes)
-                .mediaType(media)
-                .build();
-    }
-
-
-
-
-
-    /**********************************************************************
-     * MQTT Callback class
-     **********************************************************************/
-
-    static MqttCallback callback = new MqttCallback() {
-
-        private final Logger LOGGER = LoggerFactory.getLogger(MqttCallback.class);
-
-        public SourceCallback<InputStream, Map<String, Object>> sourceCallback;
-
-        @Override
-        public void messageArrived(String topic, MqttMessage message) throws Exception {
-            if (message == null) { //If null there is no new messages!
-                return;
-            }
-
-            pushPayload(topic, message);
-
-        }
-
-        @Override
-        public void deliveryComplete(IMqttDeliveryToken token) {
-            LOGGER.info("Token: " + token.toString());
-        }
-
-        @Override
-        public void connectionLost(Throwable cause) {
-            LOGGER.error("Conection LOST!!");
-            cause.printStackTrace();
-        }
-
-    };
 
 }
