@@ -16,5 +16,4 @@ import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProvider
 @ConnectionProviders(MosquittoConnectionProvider.class)
 public class MosquittoConfiguration {
 
-
 }

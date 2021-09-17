@@ -3,18 +3,15 @@ package com.kricom.mosquitto;
 import com.kricom.mosquitto.internal.MosquittoConfiguration;
 import com.kricom.mosquitto.internal.connection.MosquittoConnection;
 import com.kricom.mosquitto.internal.connection.MosquittoConnectionMock;
-import com.kricom.mosquitto.internal.connection.MosquittoConnectionProvider;
 import com.kricom.mosquitto.internal.connection.MosquittoConnectionProviderMock;
 import com.kricom.mosquitto.internal.operations.PublishOperation;
 import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
 public class PublishOperationTestCase {
 
