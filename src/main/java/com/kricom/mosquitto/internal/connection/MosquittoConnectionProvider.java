@@ -1,10 +1,12 @@
 package com.kricom.mosquitto.internal.connection;
 
 import org.mule.runtime.api.connection.*;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,29 +26,37 @@ public class MosquittoConnectionProvider<Mule4mosquitoConnection> implements Poo
 
   private final Logger LOGGER = LoggerFactory.getLogger(MosquittoConnectionProvider.class);
 
+  /*
+   * At least one parameter must be Required (or not Optional) to show all properties on Configuration.
+   */
   @DisplayName("Mosquitto Host")
-  @Optional(defaultValue = "localhost")
+  @Placement(order = 1, tab = "Connection")
   @Parameter
   private String host;
 
   @DisplayName("Mosquitto Port")
   @Optional(defaultValue = "1883")
+  @Placement(order = 2, tab = "Connection")
   @Parameter
   private int port;
 
-  @DisplayName("User Name")
-  @Optional(defaultValue = "mule")
+  @DisplayName("Username")
+  @Optional()
+  @Placement(order = 3, tab = "Connection")
   @Parameter
   private String userName;
 
   @DisplayName("Password")
-  @Optional(defaultValue = "max")
+  @Placement(order = 4, tab = "Connection")
+  @Optional()
+  @Expression
   @Password
   @Parameter
   private String password;
 
   @DisplayName("Client Id")
   @Optional(defaultValue = "mule-mosquito-client")
+  @Placement(order = 5, tab = "Connection")
   @Parameter
   private String clientId;
 
@@ -56,6 +66,7 @@ public class MosquittoConnectionProvider<Mule4mosquitoConnection> implements Poo
 
   @Override
   public MosquittoConnection connect() throws ConnectionException {
+
     synchronized (this){
       if (connection == null){
         connection = new MosquittoConnection(host, port, userName, password, clientId+"-"+clientIdCount);

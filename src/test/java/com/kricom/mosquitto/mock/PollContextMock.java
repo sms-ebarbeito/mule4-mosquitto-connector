@@ -1,12 +1,7 @@
 package com.kricom.mosquitto.mock;
 
 import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.util.Preconditions;
-import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.PollContext;
-import org.mule.runtime.extension.api.runtime.source.PollContext;
-import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
-import org.mule.runtime.module.extension.internal.runtime.source.poll.PollingSourceWrapper;
 
 import java.io.InputStream;
 import java.io.Serializable;

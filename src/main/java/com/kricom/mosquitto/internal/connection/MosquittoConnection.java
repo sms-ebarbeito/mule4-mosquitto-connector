@@ -1,6 +1,5 @@
 package com.kricom.mosquitto.internal.connection;
 
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -46,8 +45,12 @@ public class MosquittoConnection {
     try {
       mqttClient = new MqttClient(brokerUrl, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
-      connOpts.setUserName(userName);
-      connOpts.setPassword(password.toCharArray());
+      if (!("".equals(userName) && userName == null)) {
+        connOpts.setUserName(userName);
+      }
+      if (!("".equals(password) && password == null)){
+        connOpts.setPassword(password.toCharArray());
+      }
       connOpts.setCleanSession(true);
       connOpts.setAutomaticReconnect(true);
       connOpts.setKeepAliveInterval(100);
